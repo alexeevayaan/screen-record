@@ -139,7 +139,41 @@ describe('stopRecording', () => {
 });
 
 describe('isRecording', () => {
-  it('reports whether a recording is in progress', () => {
+  function deferred() {
+    let resolve!: (uri: string) => void;
+    let reject!: (error: Error) => void;
+    const promise = new Promise<string>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  }
+
+  it('reports a recording as soon as it is asked for', async () => {
+    const recording = deferred();
+    native.startRecording.mockReturnValue(recording.promise);
+
+    const uri = recordView(7);
+
+    expect(isRecording()).toBe(true);
+    recording.resolve(VIDEO);
+    await uri;
+    expect(isRecording()).toBe(false);
+  });
+
+  it('stops reporting a recording that failed', async () => {
+    const recording = deferred();
+    native.startRecording.mockReturnValue(recording.promise);
+
+    const uri = recordScreen();
+
+    expect(isRecording()).toBe(true);
+    recording.reject(new Error('A recording is already in progress'));
+    await expect(uri).rejects.toThrow();
+    expect(isRecording()).toBe(false);
+  });
+
+  it('reports a recording the native side knows of', () => {
     expect(isRecording()).toBe(false);
 
     native.isRecording.mockReturnValue(true);

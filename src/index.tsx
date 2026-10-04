@@ -27,14 +27,26 @@ const DEFAULTS = {
 /** The tag the native side records the whole window for. */
 const WINDOW = -1;
 
+/**
+ * Recordings asked for here that haven't finished. The native side starts a recording on the main thread, a moment
+ * after it's asked to, and only knows of it from then on.
+ */
+let pending = 0;
+
 function record(tag: number, options: RecordOptions) {
-  return NativeScreenRecord.startRecording(
+  const recording = NativeScreenRecord.startRecording(
     tag,
     options.durationMs ?? DEFAULTS.durationMs,
     options.width ?? DEFAULTS.width,
     options.fps ?? DEFAULTS.fps,
     options.bitRate ?? DEFAULTS.bitRate
   );
+  pending += 1;
+  const finish = () => {
+    pending -= 1;
+  };
+  recording.then(finish, finish);
+  return recording;
 }
 
 /**
@@ -43,7 +55,7 @@ function record(tag: number, options: RecordOptions) {
  * recording. One recording at a time.
  *
  * ```tsx
- * const ref = useRef<View>(null);
+ * const ref = useRef<ComponentRef<typeof View>>(null);
  * const uri = await recordView(ref, { durationMs: 3000 });
  * ```
  */
@@ -71,6 +83,7 @@ export function stopRecording() {
   NativeScreenRecord.stopRecording();
 }
 
+/** Whether a recording is in progress, from the moment `recordView` or `recordScreen` is called until it settles. */
 export function isRecording(): boolean {
-  return NativeScreenRecord.isRecording();
+  return pending > 0 || NativeScreenRecord.isRecording();
 }
