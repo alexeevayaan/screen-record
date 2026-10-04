@@ -1,6 +1,6 @@
 {
   "name": "react-native-screen-record",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Record a React Native view or the whole app window into an MP4 video, animations and all",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
