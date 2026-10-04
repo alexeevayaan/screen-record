@@ -1,7 +1,7 @@
 {
   "name": "react-native-screen-record",
   "version": "0.1.0",
-  "description": "screen record",
+  "description": "Record a React Native view or the whole app window into an MP4 video, animations and all",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
@@ -48,18 +48,26 @@
   "keywords": [
     "react-native",
     "ios",
-    "android"
+    "android",
+    "expo",
+    "screen-record",
+    "screen-recording",
+    "record-view",
+    "video",
+    "mp4",
+    "turbo-module",
+    "new-architecture"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexeevayaan/react-native-screen-record.git"
+    "url": "git+https://github.com/alexeevayaan/screen-record.git"
   },
   "author": "alexeevayaan <alexeevayaan@gmail.com> (https://github.com/alexeevayaan)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alexeevayaan/react-native-screen-record/issues"
+    "url": "https://github.com/alexeevayaan/screen-record/issues"
   },
-  "homepage": "https://github.com/alexeevayaan/react-native-screen-record#readme",
+  "homepage": "https://github.com/alexeevayaan/screen-record#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
@@ -137,7 +145,7 @@
       "customExportConditions": [
         "require",
         "react-native",
-        "<%- project.sourceCondition -%>"
+        "react-native-screen-record-source"
       ]
     },
     "modulePathIgnorePatterns": [

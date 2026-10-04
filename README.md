@@ -5,16 +5,25 @@ stickers, Skia drawings, charts) as video.
 
 - H.264 MP4 without sound, up to 1080 px wide by default, at up to 30 fps.
 - Records what's on screen: native views, Skia and other GPU-drawn views, animations from any thread.
-- iOS and Android (8.0+). New architecture (TurboModule).
+- iOS and Android, no permissions needed.
+
+## Requirements
+
+- React Native with the New Architecture (a TurboModule; tested with React Native 0.86 and Expo SDK 57).
+- iOS 15.1 or newer.
+- Android 8.0 (API 26) or newer to record; on older versions the app still runs and recording rejects with
+  `E_UNSUPPORTED`.
 
 ## Installation
 
 ```sh
+npx expo install react-native-screen-record
+# or
 npm install react-native-screen-record
 ```
 
 Then rebuild the app (`npx expo run:ios` / `run:android`, or a new development build): the library has native code, so
-it doesn't run in Expo Go.
+it doesn't run in Expo Go. No config plugin is needed. In a React Native app without Expo, run `pod install` in `ios/`.
 
 ## Usage
 
@@ -31,7 +40,11 @@ function Story() {
     // `uri` is a file:// URI in the app's cache: move, share or save it to the gallery.
   }
 
-  return <View ref={ref} collapsable={false}>{/* … */}</View>;
+  return (
+    <View ref={ref} collapsable={false}>
+      {/* … */}
+    </View>
+  );
 }
 ```
 
@@ -64,13 +77,24 @@ this is how a recording ends.
 | `fps`        | `30`         | Frames per second, at most.                                     |
 | `bitRate`    | `10_000_000` | Average bit rate in bits per second.                            |
 
-One recording runs at a time; starting another rejects with `E_BUSY`.
+### Errors
+
+The promise rejects with an error whose `code` is one of:
+
+| Code            | When                                                                |
+| --------------- | ------------------------------------------------------------------- |
+| `E_BUSY`        | A recording is already in progress: one runs at a time.             |
+| `E_NO_VIEW`     | The view isn't there (unmounted, or flattened away on Android).     |
+| `E_RECORDING`   | Recording failed: the view has no size, no frame was recorded, etc. |
+| `E_UNSUPPORTED` | Android older than 8.0.                                             |
+
+If the ref is empty when `recordView` is called, it rejects without a code, before reaching the native side.
 
 ## How it works
 
 - **iOS:** a `CADisplayLink` ticks with the screen, at most `fps` times a second. Each tick, the view's hierarchy is
-  drawn (`drawViewHierarchyInRect:afterScreenUpdates:NO`, which includes Metal-backed views) into a pixel buffer of an
-  `AVAssetWriter` and appended with the time since the recording started.
+  drawn (`drawViewHierarchyInRect:afterScreenUpdates:NO`, which includes Metal-backed views; through its layer if it
+  isn't on screen) into a pixel buffer of an `AVAssetWriter` and appended with the time since the recording started.
 - **Android:** `PixelCopy` copies the part of the window the view covers, which is drawn onto the input surface of a
   hardware H.264 encoder (`MediaCodec`); `MediaMuxer` writes the MP4. If no encoder takes the requested size, it falls
   back to 720 px wide.
