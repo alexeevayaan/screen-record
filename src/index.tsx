@@ -50,9 +50,9 @@ function record(tag: number, options: RecordOptions) {
 }
 
 /**
- * Records what a view shows, animations and all, into an H.264 MP4 without sound. Resolves to the file's URI (in the
- * app's cache) once it's written. The view is recorded as it's drawn on screen, so it must be on screen while
- * recording. One recording at a time.
+ * Records what a view shows, animations and all, into an H.264 MP4 without sound. Resolves to the URI of a new
+ * temporary file once it's written: move it to keep it. The view is recorded as it's drawn on screen, so it must be on
+ * screen while recording. One recording at a time.
  *
  * ```tsx
  * const ref = useRef<ComponentRef<typeof View>>(null);

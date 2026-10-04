@@ -37,7 +37,7 @@ function Story() {
 
   async function save() {
     const uri = await recordView(ref, { durationMs: 5000 });
-    // `uri` is a file:// URI in the app's cache: move, share or save it to the gallery.
+    // `uri` is a temporary file:// URI: move it to keep it, share it or save it to the gallery.
   }
 
   return (
@@ -49,6 +49,24 @@ function Story() {
 ```
 
 `collapsable={false}` keeps a plain `View` from being flattened away on Android, so there's a native view to record.
+
+To record until you decide to stop, pass `durationMs: 0` and call `stopRecording()`:
+
+```tsx
+import { recordScreen, stopRecording } from 'react-native-screen-record';
+
+const video = recordScreen({ durationMs: 0 });
+// … later
+stopRecording();
+const uri = await video;
+```
+
+### Where the video goes
+
+Each recording is a new file in the app's temporary directory (iOS) or cache directory (Android), where the system may
+delete it. Move it somewhere permanent to keep it (for example with `expo-file-system`), save it to the gallery (for
+example with `expo-media-library`) or share it, and delete it once you're done: the library doesn't remove old
+recordings.
 
 ### API
 
@@ -67,6 +85,8 @@ Ends the recording in progress early; its promise resolves with what was recorde
 this is how a recording ends.
 
 #### `isRecording(): boolean`
+
+Whether a recording is in progress: from the call to `recordView` or `recordScreen` until its promise settles.
 
 #### Options
 
