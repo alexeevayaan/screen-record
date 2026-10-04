@@ -21,7 +21,10 @@
     "*.podspec",
     "react-native.config.js",
     "!ios/build",
+    "!ios/Package.swift",
+    "!ios/Tests",
     "!android/build",
+    "!android/src/test",
     "!android/gradle",
     "!android/gradlew",
     "!android/gradlew.bat",
@@ -38,6 +41,8 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "jest",
+    "test:ios": "sh scripts/test-ios.sh",
+    "test:android": "sh scripts/test-android.sh",
     "release": "release-it --only-version"
   },
   "keywords": [

@@ -14,7 +14,10 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/alexeevayaan/react-native-screen-record.git", :tag => "#{s.version}" }
 
   s.source_files = "ios/**/*.{h,m,mm,swift,cpp}"
+  # The Swift package that tests the core on its own isn't part of the pod.
+  s.exclude_files = "ios/Package.swift", "ios/Tests/**/*"
   s.private_header_files = "ios/**/*.h"
+  s.frameworks = "AVFoundation", "CoreMedia", "CoreVideo", "QuartzCore", "UIKit"
 
   install_modules_dependencies(s)
 end

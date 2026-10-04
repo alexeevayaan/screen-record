@@ -87,6 +87,15 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
+The native code has tests of its own:
+
+```sh
+yarn test:ios      # the iOS core (ios/Core) on an iOS simulator, with XCTest; set IOS_SIMULATOR_ID to pick one
+yarn test:android  # the Android code, with JUnit on the JVM (generates example/android first if needed)
+```
+
+The iOS tests record real views into real videos and read them back, so they take a few seconds.
+
 
 ### Commit message convention
 
@@ -121,6 +130,8 @@ The `package.json` file contains various scripts for common tasks:
 - `yarn typecheck`: type-check files with TypeScript.
   - `yarn lint`: lint files with [ESLint](https://eslint.org/).
     - `yarn test`: run unit tests with [Jest](https://jestjs.io/).
+    - `yarn test:ios`: run the iOS core tests with XCTest on an iOS simulator.
+    - `yarn test:android`: run the Android unit tests with JUnit.
   - `yarn example start`: start the Metro server for the example app.
 - `yarn example android`: run the example app on Android.
 - `yarn example ios`: run the example app on iOS.
